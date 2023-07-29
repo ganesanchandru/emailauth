@@ -14,10 +14,10 @@ class AppSignUP extends StatefulWidget {
 class _AppSignUPState extends State<AppSignUP> {
   bool _textVisible = true;
   final _sinUpFormKey = GlobalKey<FormState>();
-  final TextEditingController _userName = TextEditingController();
-  final TextEditingController _userMobile = TextEditingController();
-  final TextEditingController _userPass = TextEditingController();
-  final TextEditingController _userConfirm = TextEditingController();
+  final TextEditingController _userEmailController = TextEditingController();
+  final TextEditingController _userMobileController = TextEditingController();
+  final TextEditingController _userPassController = TextEditingController();
+  final TextEditingController _userConfirmController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,17 +38,20 @@ class _AppSignUPState extends State<AppSignUP> {
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: TextFormField(
-                  validator: (username) {
-                    if(username!.isEmpty){
-                      return'Enter Your Email';
+                  validator: (userEmail) {
+                    if(userEmail!.isEmpty){
+                      return'Please Enter Your Email';
+                    }else if(!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                        .hasMatch(userEmail)) {
+                      return "It's Not a vaild Email";
                     }
                     return null;
                   },
-                  controller: _userName,
+                  controller: _userEmailController,
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.mail,color: Colors.grey,),
-                    hintText: 'Username',
-                    labelText: 'Username',
+                    hintText: 'Email',
+                    labelText: 'Email',
                     labelStyle: const TextStyle(color: Colors.orange),
                     contentPadding: const EdgeInsets.symmetric(vertical: 20,horizontal: 10),
                     enabledBorder: OutlineInputBorder(
@@ -75,11 +78,13 @@ class _AppSignUPState extends State<AppSignUP> {
                   maxLength: 10,
                   validator: (userMob) {
                     if(userMob!.isEmpty){
+                      return'Please Enter Phone Number';
+                    } else if(userMob.length < 10){
                       return'Please Enter 10 Digit Number';
                     }
                     return null;
                   },
-                  controller: _userMobile,
+                  controller: _userMobileController,
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.phone_android,color: Colors.grey,),
                     hintText: 'Moile Number',
@@ -109,11 +114,13 @@ class _AppSignUPState extends State<AppSignUP> {
                   // maxLength: 6,
                   validator: (userpass) {
                     if(userpass!.isEmpty){
-                      return'Please Enter 6 Digit Password';
+                      return'Please Enter Your Password';
+                    }else if(userpass.length < 6){
+                      return 'Password is minimum 6 character';
                     }
                     return null;
                   },
-                  controller: _userPass,
+                  controller: _userPassController,
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.password,color: Colors.grey,),
                     suffixIcon: IconButton(onPressed: () {
@@ -146,13 +153,15 @@ class _AppSignUPState extends State<AppSignUP> {
                   obscureText: _textVisible,
                   keyboardType: TextInputType.text,
                   // maxLength: 6,
-                  validator: (userpass) {
-                    if(userpass!.isEmpty ){
-                      return'Please Enter 6 Digit Password';
+                  validator: (comfirmpass) {
+                    if(comfirmpass!.isEmpty ){
+                      return'Please Enter Your Password';
+                    }else if(comfirmpass != _userPassController.text.trim()){
+                      return 'Wrong Password';
                     }
-                    return null;
+                      return null;
                   },
-                  controller: _userConfirm,
+                  controller: _userConfirmController,
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.password,color: Colors.grey,),
                     suffixIcon: IconButton(onPressed: () {
@@ -193,12 +202,15 @@ class _AppSignUPState extends State<AppSignUP> {
                     ),
                     onPressed: () {
                       if(_sinUpFormKey.currentState!.validate()){
-                        AuthManage().SignUp(_userName.text.trim(), _userPass.text.trim());
-                        print('Validated');
+                        AuthManage().signUp(_userEmailController.text.trim(), _userPassController.text.trim()).then((value) => {
                         Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const HomePage()),
-                        );
+                        context,
+                        MaterialPageRoute(builder: (context) => const HomePage()),
+                        ),
+                        }).catchError((error) {
+                          print(error);
+                        });
+                        print('Validated');
                       }else{
                         print('Not validated');
                       }

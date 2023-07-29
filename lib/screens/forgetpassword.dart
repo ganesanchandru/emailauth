@@ -9,8 +9,8 @@ class AppForgetPassword extends StatefulWidget {
 }
 
 class _AppForgetPasswordState extends State<AppForgetPassword> {
-  final _resetpassKey = GlobalKey<FormState>();
-  final TextEditingController _resetPass = TextEditingController();
+  final _resetPassKey = GlobalKey<FormState>();
+  final TextEditingController _resetPassController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +21,7 @@ class _AppForgetPasswordState extends State<AppForgetPassword> {
       ),
       body: SafeArea(
         child: Form(
-          key: _resetpassKey,
+          key: _resetPassKey,
           child: ListView(
             children: [
               SizedBox(
@@ -38,17 +38,20 @@ class _AppForgetPasswordState extends State<AppForgetPassword> {
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: TextFormField(
-                  validator: (username) {
-                    if(username!.isEmpty){
+                  validator: (userEmail) {
+                    if(userEmail!.isEmpty){
                       return'Enter Your Email';
+                    }else if(!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                        .hasMatch(userEmail)) {
+                      return "It's Not a vaild Email";
                     }
                     return null;
                   },
-                  controller: _resetPass,
+                  controller: _resetPassController,
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.mail,color: Colors.grey,),
-                    hintText: 'Username',
-                    labelText: 'Username',
+                    hintText: 'Email',
+                    labelText: 'Enter Your Email',
                     labelStyle: const TextStyle(color: Colors.orange),
                     contentPadding: const EdgeInsets.symmetric(vertical: 20,horizontal: 10),
                     enabledBorder: OutlineInputBorder(
@@ -78,9 +81,9 @@ class _AppForgetPasswordState extends State<AppForgetPassword> {
                       ),
                     ),
                     onPressed: () {
-                      if(_resetpassKey.currentState!.validate()){
+                      if(_resetPassKey.currentState!.validate()){
                         FirebaseAuth.instance
-                            .sendPasswordResetEmail(email: _resetPass.text)
+                            .sendPasswordResetEmail(email: _resetPassController.text)
                             .then((value) => Navigator.of(context).pop());
                       }
                     },

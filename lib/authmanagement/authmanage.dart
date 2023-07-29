@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthManage{
-  Future SignUp(String userEmail , String userPass)async{
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(email: userEmail, password: userPass);
+  Future<UserCredential> signUp(String userEmail , String userPass)async{
+    return await FirebaseAuth.instance.createUserWithEmailAndPassword(email: userEmail, password: userPass);
   }
 }

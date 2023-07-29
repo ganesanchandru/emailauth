@@ -15,8 +15,8 @@ class AppSignINScreen extends StatefulWidget {
 class _AppSignINScreenState extends State<AppSignINScreen> {
   bool _textVisible = true;
   final _sinInFormKey = GlobalKey<FormState>();
-  TextEditingController _userName = TextEditingController();
-  TextEditingController _userPass = TextEditingController();
+  TextEditingController _userEmailController = TextEditingController();
+  TextEditingController _userPassController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,22 +40,22 @@ class _AppSignINScreenState extends State<AppSignINScreen> {
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: TextFormField(
-                  validator: (username) {
-                    if(username!.isEmpty){
+                  validator: (userEmail) {
+                    if(userEmail!.isEmpty){
                       return'Enter Your Email';
-                    }else if(!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                        .hasMatch(username)) {
+                    }else if(!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                        .hasMatch(userEmail)) {
                       return "It's Not a vaild Email";
                     }
                     return null;
                   },
-                  controller: _userName,
+                  controller: _userEmailController,
                   cursorColor: Colors.orange,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
-                    labelText: "Username",
+                    labelText: "Email",
                     labelStyle: TextStyle(color: Colors.orange),
                     hintText: "Enter your Email Address",
                     prefixIcon: Icon(Icons.person,
@@ -85,7 +85,7 @@ class _AppSignINScreenState extends State<AppSignINScreen> {
                     }
                     return null;
                   },
-                  controller: _userPass,
+                  controller: _userPassController,
                   obscureText: _textVisible,
                   cursorColor: Colors.orange,
                   decoration: InputDecoration(
@@ -132,7 +132,7 @@ class _AppSignINScreenState extends State<AppSignINScreen> {
                   ),
                     onPressed: () {
                     if(_sinInFormKey.currentState!.validate()){
-                      FirebaseAuth.instance.signInWithEmailAndPassword(email: _userName.text, password: _userPass.text)
+                      FirebaseAuth.instance.signInWithEmailAndPassword(email: _userEmailController.text, password: _userPassController.text)
                           .then((value) {
                         Navigator.push(
                           context,
